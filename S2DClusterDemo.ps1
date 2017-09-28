@@ -1,6 +1,5 @@
 Login-AzureRmAccount
 
-$randomNumber = Get-random 100
 $subscriptionName = "Microsoft Azure Sponsor PLAN"
 $deploymentName = "S2DDemo"
 $resourceGroupName = "mebisuda-S2DDemo"
