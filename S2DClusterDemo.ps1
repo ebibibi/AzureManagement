@@ -17,7 +17,6 @@ $existingVNETName = "adVNET"
 $existingSubnetName = "adSubnet"
 $dnsLabelPrefix = "mebis2dnode"
 $vmSize = "Standard_D2"
-$ouPath = 'CN=Computers;DC=s2d;DC=test'
 
 
 Get-AzureRmSubscription -SubscriptionName $subscriptionName | Select-AzureRmSubscription
@@ -27,16 +26,20 @@ New-AzureRmResourceGroup -Name $resourceGroupName -Location $location
 
 # create new ad forest(adVM)
 # https://azure.microsoft.com/ja-jp/resources/templates/active-directory-new-domain/
-New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/active-directory-new-domain/azuredeploy.json `
+New-AzureRmResourceGroupDeployment -Name ($deploymentName + "DC") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/active-directory-new-domain/azuredeploy.json `
 -adminUsername $adminUsername -adminPassword $adminPassword -domainName $domainName -dnsPrefix $dnsPrefix 
 
 # add new server to the new ad domain
 # https://azure.microsoft.com/ja-jp/resources/templates/201-vm-domain-join/
-New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"1") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -ouPath $ouPath -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node1") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
+-existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"1") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
 
-New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"2") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -ouPath $ouPath -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node2") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
+-existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"2") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
 
-New-AzureRmResourceGroupDeployment -Name $deploymentName -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"3") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -ouPath $ouPath -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node3") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
+-existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"3") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+
+New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node4") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
+-existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"4") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+
