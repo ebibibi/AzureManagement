@@ -64,5 +64,5 @@ Restart-Computer
 
 #add failover cluster role
 Enable-PSRemoting
-Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {Add-WindowsFeature Failover-Clustering}
+Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {Add-WindowsFeature Failover-Clustering -IncludeManagementTools}
 
