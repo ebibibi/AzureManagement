@@ -1,3 +1,4 @@
+# スクリプトの前半はAzureの操作ができる任意の場所で実行してください。
 Login-AzureRmAccount
 $prefix = "ebis2d1"
 
@@ -48,10 +49,11 @@ New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node3") -ResourceGrou
 New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node4") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/ebibibi/AzureManagement/master/newDomainJoinedVM/azuredeploy.json `
 -existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node4") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
 
-#--------------------------------------------------------------------------
+# ここまで-----------------------------------------------------------------------
 
 
 
+# 以下は展開されたクラスタノードとなるサーバーにRDPで入ってからその中で実行してください。-------------------------------
 
 #enable-psremoting
 Enable-PSRemoting
