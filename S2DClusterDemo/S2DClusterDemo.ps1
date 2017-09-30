@@ -61,7 +61,7 @@ Set-Item WSMan:\localhost\Client\TrustedHosts "*"
 
 #nodes
 $prefix = "ebis2d1"
-$nodes = (($prefix + "node1"), ($prefix + "node2"), ($prefix + "node3"))
+$nodes = (($prefix + "node1"), ($prefix + "node2"), ($prefix + "node3"), ($prefix + "node4"))
 
 #confifure nodes
 Invoke-Command -ComputerName $nodes -ScriptBlock {
