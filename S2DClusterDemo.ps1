@@ -50,7 +50,7 @@ New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node4") -ResourceGrou
 
 
 
-#Change to Japanese GUI
+#Change to Japanese GUI(option)
 $LpUrl = "http://fg.v4.download.windowsupdate.com/c/msdownload/update/software/updt/2016/09/"
 $LpFile = "lp_9a666295ebc1052c4c5ffbfa18368dfddebcd69a.cab"
 $LpTemp = "C:\LpTemp.cab"
