@@ -42,3 +42,27 @@ New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node3") -ResourceGrou
 New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node4") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
 -existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"4") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
 
+#Change to Japanese GUI
+$LpUrl = "http://fg.v4.download.windowsupdate.com/c/msdownload/update/software/updt/2016/09/"
+$LpFile = "lp_9a666295ebc1052c4c5ffbfa18368dfddebcd69a.cab"
+$LpTemp = "C:\LpTemp.cab"
+Set-WinUserLanguageList -LanguageList ja-JP,en-US -Force
+Start-BitsTransfer -Source $LpUrl$LpFile -Destination $LpTemp -Priority High
+Add-WindowsPackage -PackagePath $LpTemp -Online
+Set-WinDefaultInputMethodOverride -InputTip "0411:00000411"
+Set-WinLanguageBarOption -UseLegacySwitchMode -UseLegacyLanguageBar
+Remove-Item $LpTemp -Force
+Restart-Computer
+
+Set-WinUILanguageOverride -Language ja-JP
+Set-WinCultureFromLanguageListOptOut -OptOut $False
+Set-WinHomeLocation -GeoId 0x7A
+Set-WinSystemLocale -SystemLocale ja-JP
+Set-TimeZone -Id "Tokyo Standard Time"
+Restart-Computer
+
+
+#add failover cluster role
+Enable-PSRemoting
+Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {Add-WindowsFeature Failover-Clustering}
+
