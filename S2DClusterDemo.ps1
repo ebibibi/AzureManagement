@@ -69,15 +69,23 @@ Set-WinSystemLocale -SystemLocale ja-JP
 Set-TimeZone -Id "Tokyo Standard Time"
 Restart-Computer
 
-
-#add failover cluster role
+#enable-psremoting
 Enable-PSRemoting
 Set-Item WSMan:\localhost\Client\TrustedHosts "*"
+
+#disable windows firewall
+Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {Get-NetFirewallProfile | Set-NetFirewallProfile -Enabled false}
+
+
+#add failover cluster role
 Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {Add-WindowsFeature Failover-Clustering -IncludeManagementTools}
+
+# enable failover cluster
+# We must use static IP for Cluster resource
 
 
 #clean up all disks
-Invoke-Command (Get-Cluster -Name s2dcluster -Domain s2d.test| Get-ClusterNode) -Credential (Get-Credential) {
+Invoke-Command (Get-Cluster -Name mebis2dnode1| Get-ClusterNode) -Credential (Get-Credential) {
     Update-StorageProviderCache
     Get-StoragePool | Where-Object IsPrimordial -eq $false | Set-StoragePool -IsReadOnly:$false -ErrorAction SilentlyContinue
     Get-StoragePool | Where-Object IsPrimordial -eq $false | Get-VirtualDisk | Remove-VirtualDisk -Confirm:$false -ErrorAction SilentlyContinue
@@ -94,3 +102,4 @@ Invoke-Command (Get-Cluster -Name s2dcluster -Domain s2d.test| Get-ClusterNode) 
     Get-Disk |Where-Object Number -ne $null |Where-Object IsBoot -ne $true |Where-Object IsSystem -ne $true |Where-Object PartitionStyle -eq RAW | Group-Object -NoElement -Property FriendlyName
     
     } | Sort-Object -Property PsComputerName,Count
+
