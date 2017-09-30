@@ -30,11 +30,12 @@ New-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -Name $witnessSA
 
 # create new ad forest(adVM)
 # https://github.com/ebibibi/AzureManagement/tree/master/newADForest
-New-AzureRmResourceGroupDeployment -Name ($deploymentName + "DC") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/ebibibi/AzureManagement/master/newDomainJoinedVM/azuredeploy.json `
+New-AzureRmResourceGroupDeployment -Name ($deploymentName + "DC") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/ebibibi/AzureManagement/master/newADForest/azuredeploy.json `
 -adminUsername $adminUsername -adminPassword $adminPassword -domainName $domainName -dnsPrefix ($Prefix + "advm") 
 
 # add new server to the new ad domain
 # https://github.com/ebibibi/AzureManagement/tree/master/newDomainJoinedVM
+# Todo: Diskをあと1つづつ追加する必要あり。テンプレート対応。
 New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node1") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/ebibibi/AzureManagement/master/newDomainJoinedVM/azuredeploy.json `
 -existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node1") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
 
