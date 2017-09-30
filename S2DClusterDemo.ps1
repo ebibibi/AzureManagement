@@ -1,23 +1,22 @@
 Login-AzureRmAccount
+$prefix = "ebis2d"
 
 $subscriptionName = "Microsoft Azure Sponsor PLAN"
 $deploymentName = "S2DDemo"
-$resourceGroupName = "mebisuda-S2DDemo"
+$resourceGroupName = ($prefix + "-Demo")
 $location = "Japan East"
 
 #witness storage account
-$witnessSAName = "mebis2dwitness"
+$witnessSAName = ($prefix +"witness")
 
 #deploy parameters for new AD forest
 $adminUsername = "mebisuda"
 $adminPassword = Read-Host -AsSecureString -Prompt "password"
 $domainName = "s2d.test"
-$dnsPrefix = ("mebisudas2ddemoadvm")
 
 #deploy parameters for member servers
 $existingVNETName = "adVNET"
 $existingSubnetName = "adSubnet"
-$dnsLabelPrefix = "mebis2dnode"
 $vmSize = "Standard_D2"
 
 
@@ -32,21 +31,21 @@ New-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -Name $witnessSA
 # create new ad forest(adVM)
 # https://azure.microsoft.com/ja-jp/resources/templates/active-directory-new-domain/
 New-AzureRmResourceGroupDeployment -Name ($deploymentName + "DC") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/active-directory-new-domain/azuredeploy.json `
--adminUsername $adminUsername -adminPassword $adminPassword -domainName $domainName -dnsPrefix $dnsPrefix 
+-adminUsername $adminUsername -adminPassword $adminPassword -domainName $domainName -dnsPrefix ($Prefix + "advm") 
 
 # add new server to the new ad domain
 # https://azure.microsoft.com/ja-jp/resources/templates/201-vm-domain-join/
 New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node1") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"1") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+-existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node1") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
 
 New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node2") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"2") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+-existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node2") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
 
 New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node3") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"3") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+-existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node3") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
 
 New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node4") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"4") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+-existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node4") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
 
 
 
@@ -74,18 +73,29 @@ Restart-Computer
 Enable-PSRemoting
 Set-Item WSMan:\localhost\Client\TrustedHosts "*"
 
+#nodes
+$nodes = (($prefix + "node1"), ($prefix + "node2"), ($prefix + "node3"), ($prefix + "node4"))
+
 #disable windows firewall
-Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {Get-NetFirewallProfile | Set-NetFirewallProfile -Enabled false}
+Invoke-Command -ComputerName $nodes -Credential Get-Credential -ScriptBlock {
+    #disable firewall
+    #Get-NetFirewallProfile | Set-NetFirewallProfile -Enabled false
 
-#add failover cluster role
-Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {Add-WindowsFeature Failover-Clustering -IncludeManagementTools}
+    #add failover cluster role
+    Add-WindowsFeature Failover-Clustering -IncludeManagementTools
 
-# enable failover cluster
+    #add fileserver role
+    Install-WindowsFeature FS-FileServer
+}
+
+Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {}
+
+
+# create failover cluster
 # We must use static IP for Cluster resource
-$nodes = ("mebis2dnode1", "mebis2dnode2", "mebis2dnode3")
 New-Cluster -Name S2DCluster -Node $nodes –StaticAddress 10.0.0.100
 
-#clean up all disks
+#clean up all disks(option)
 Invoke-Command (Get-Cluster -Name mebis2dnode1| Get-ClusterNode) -Credential (Get-Credential) {
     Update-StorageProviderCache
     Get-StoragePool | Where-Object IsPrimordial -eq $false | Set-StoragePool -IsReadOnly:$false -ErrorAction SilentlyContinue
@@ -114,7 +124,6 @@ New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk03 -FileSystem CSVFS
 
 
 # create SOFS
-Invoke-Command $nodes {Install-WindowsFeature FS-FileServer}
 Add-ClusterScaleOutFileServerRole -Name S2D-SOFS
 New-Item -Path C:\ClusterStorage\Volume1\Data -ItemType Directory
 New-SmbShare -Name Share1 -Path C:\ClusterStorage\Volume1\Data -FullAccess Everyone
