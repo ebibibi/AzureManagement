@@ -103,6 +103,6 @@ Invoke-Command (Get-Cluster -Name mebis2dnode1| Get-ClusterNode) -Credential (Ge
     
     } | Sort-Object -Property PsComputerName,Count
 
-# enable S2D
+# enable S2D (automatically created cluster pool)
 Enable-ClusterS2D
 
