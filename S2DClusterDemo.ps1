@@ -50,6 +50,7 @@ New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node4") -ResourceGrou
 
 
 
+
 #Change to Japanese GUI
 $LpUrl = "http://fg.v4.download.windowsupdate.com/c/msdownload/update/software/updt/2016/09/"
 $LpFile = "lp_9a666295ebc1052c4c5ffbfa18368dfddebcd69a.cab"
@@ -76,13 +77,13 @@ Set-Item WSMan:\localhost\Client\TrustedHosts "*"
 #disable windows firewall
 Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {Get-NetFirewallProfile | Set-NetFirewallProfile -Enabled false}
 
-
 #add failover cluster role
 Invoke-Command -ComputerName mebis2dnode1, mebis2dnode2, mebis2dnode3, mebis2dnode4 -Credential Get-Credential -ScriptBlock {Add-WindowsFeature Failover-Clustering -IncludeManagementTools}
 
 # enable failover cluster
 # We must use static IP for Cluster resource
-
+$nodes = ("mebis2dnode1", "mebis2dnode2", "mebis2dnode3")
+New-Cluster -Name S2DCluster -Node $nodes –StaticAddress 10.0.0.100
 
 #clean up all disks
 Invoke-Command (Get-Cluster -Name mebis2dnode1| Get-ClusterNode) -Credential (Get-Credential) {
@@ -106,3 +107,5 @@ Invoke-Command (Get-Cluster -Name mebis2dnode1| Get-ClusterNode) -Credential (Ge
 # enable S2D (automatically created cluster pool)
 Enable-ClusterS2D
 
+# create new volume (this operation should be done by GUI but It couldn't now)
+New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk02 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Mirror -PhysicalDiskRedundancy 1
