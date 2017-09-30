@@ -5,6 +5,9 @@ $deploymentName = "S2DDemo"
 $resourceGroupName = "mebisuda-S2DDemo"
 $location = "Japan East"
 
+#witness storage account
+$witnessSAName = "mebis2dwitness"
+
 #deploy parameters for new AD forest
 $adminUsername = "mebisuda"
 $adminPassword = Read-Host -AsSecureString -Prompt "password"
@@ -22,6 +25,9 @@ Get-AzureRmSubscription -SubscriptionName $subscriptionName | Select-AzureRmSubs
 
 # create resource group
 New-AzureRmResourceGroup -Name $resourceGroupName -Location $location
+
+# create storage account for witnesss
+New-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -Name $witnessSAName -SkuName Standard_LRS -Location $location -Kind Storage
 
 # create new ad forest(adVM)
 # https://azure.microsoft.com/ja-jp/resources/templates/active-directory-new-domain/
@@ -41,6 +47,8 @@ New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node3") -ResourceGrou
 
 New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node4") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/azure/azure-quickstart-templates/master/201-vm-domain-join/azuredeploy.json `
 -existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($dnsLabelPrefix+"4") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword
+
+
 
 #Change to Japanese GUI
 $LpUrl = "http://fg.v4.download.windowsupdate.com/c/msdownload/update/software/updt/2016/09/"
