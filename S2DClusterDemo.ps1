@@ -108,4 +108,10 @@ Invoke-Command (Get-Cluster -Name mebis2dnode1| Get-ClusterNode) -Credential (Ge
 Enable-ClusterS2D
 
 # create new volume (this operation should be done by GUI but It couldn't now)
-New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk02 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Mirror -PhysicalDiskRedundancy 1
+New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk01 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Mirror -PhysicalDiskRedundancy 1
+
+# create SOFS
+Invoke-Command $nodes {Install-WindowsFeature FS-FileServer}
+Add-ClusterScaleOutFileServerRole -Name S2D-SOFS
+New-Item -Path C:\ClusterStorage\Volume1\Data -ItemType Directory
+New-SmbShare -Name Share1 -Path C:\ClusterStorage\Volume1\Data -FullAccess Everyone
