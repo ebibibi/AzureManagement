@@ -107,7 +107,11 @@ Get-StorageTier
 
 New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk01 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Mirror -PhysicalDiskRedundancy 1
 New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk02 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Parity -PhysicalDiskRedundancy 1
-#New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk03 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Mirror -PhysicalDiskRedundancy 2
+New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk03 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Mirror -PhysicalDiskRedundancy 2
+New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk04 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Parity -PhysicalDiskRedundancy 2
+
+Get-Volume
+explorer c:\ClusterStorage
 
 
 # create SOFS
