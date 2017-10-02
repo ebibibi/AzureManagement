@@ -101,9 +101,9 @@ Set-ClusterQuorum -CloudWitness -AccountName $witnessSAName -AccessKey (Read-Hos
 Enable-ClusterS2D
 
 # create new volume (this operation should be done by GUI but It couldn't now)
+Get-StoragePool
 Get-StoragePool S2D*| Get-ResiliencySetting
 Get-StorageTier
-Get-StorageTier | Set-StorageTier -FaultDomainAwareness PhysicalDisk
 
 New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk01 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Mirror -PhysicalDiskRedundancy 1
 New-Volume -StoragePoolFriendlyName S2D* -FriendlyName VDisk02 -FileSystem CSVFS_REFS -Size 100GB -ResiliencySettingName Parity -PhysicalDiskRedundancy 1
