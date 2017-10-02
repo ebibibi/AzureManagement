@@ -116,12 +116,12 @@ New-Item -Path C:\ClusterStorage\Volume1\Data -ItemType Directory
 New-SmbShare -Name Share1 -Path C:\ClusterStorage\Volume1\Data -FullAccess Everyone
 
 # add cluster node
-Add-ClusterNode -Name $nodes[4]
-#Set-ClusterFaultDomain –Name $nodes[4] –Parent “Rack 1” –Location “U3”
+Add-ClusterNode -Name $nodes[3]
+#Set-ClusterFaultDomain –Name $nodes[3] –Parent “Rack 1” –Location “U3”
 #Get-StoragePool S2D* | Optimize-StoragePool
 
 # remove cluster node
-Remove-ClusterNode -Name $nodes[4] -CleanupDisks
+Remove-ClusterNode -Name $nodes[3] -CleanupDisks
 
 
 #Change to Japanese GUI(option)
