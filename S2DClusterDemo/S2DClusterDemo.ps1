@@ -82,13 +82,11 @@ Invoke-Command -ComputerName $nodes -ScriptBlock {
 
 # create failover cluster
 # We must use static IP for Cluster resource
-New-Cluster -Name S2DCluster -Node $nodes –StaticAddress 10.0.0.100
+New-Cluster -Name S2DCluster -Node $nodes[0..2] –StaticAddress 10.0.0.100
 
 # add cloud monitoring
 $witnessSAName = ($prefix +"witness")
 Set-ClusterQuorum -CloudWitness -AccountName $witnessSAName -AccessKey (Read-Host -Prompt "AccessKey for witness SA.")
-
-
 
 # change fault domain
 #New-ClusterFaultDomain –Type Site –Name “Tokyo” –Location “TokyoDC”
