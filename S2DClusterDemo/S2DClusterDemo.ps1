@@ -63,10 +63,6 @@ foreach($node in $nodes) {
 
 # 以下は展開されたクラスタノードとなるサーバー(例:node1)にRDPで入ってからその中で実行してください。-------------------------------
 
-#enable-psremoting
-Enable-PSRemoting
-Set-Item WSMan:\localhost\Client\TrustedHosts "*"
-
 #nodes
 $prefix = "ebis2d1"
 $nodes = (($prefix + "node1"), ($prefix + "node2"), ($prefix + "node3"), ($prefix + "node4"))
