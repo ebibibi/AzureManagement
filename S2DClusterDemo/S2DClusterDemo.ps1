@@ -1,4 +1,9 @@
 # スクリプトの前半はAzureの操作ができる任意の場所で実行してください。
+# Azure PowerShellがインストールされている必要があります。
+# コマンドレットが足りない場合、Install-Module AzureRMおよびUpdate-Moduleでアップデートしてください。
+# Install-Module AzureRM
+# Update-Module AzureRM
+
 Login-AzureRmAccount
 $prefix = "ebis2d1"
 
@@ -16,9 +21,11 @@ $adminPassword = Read-Host -AsSecureString -Prompt "password"
 $domainName = "s2d.test"
 
 #deploy parameters for member servers
+$nodes = (($prefix + "node1"), ($prefix + "node2"), ($prefix + "node3"), ($prefix + "node4"))
 $existingVNETName = "adVNET"
 $existingSubnetName = "adSubnet"
 $vmSize = "Standard_D2"
+$additionalDataDiskSizeGB = 1000
 
 
 Get-AzureRmSubscription -SubscriptionName $subscriptionName | Select-AzureRmSubscription
@@ -36,18 +43,17 @@ New-AzureRmResourceGroupDeployment -Name ($deploymentName + "DC") -ResourceGroup
 
 # add new server to the new ad domain
 # https://github.com/ebibibi/AzureManagement/tree/master/newDomainJoinedVM
-# Todo: Diskをあと1つづつ追加する必要あり。テンプレート対応。
-New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node1") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/ebibibi/AzureManagement/master/newDomainJoinedVM/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node1") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword -DeploymentDebugLogLevel All
+foreach($node in $nodes) {
+    New-AzureRmResourceGroupDeployment -Name $node -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/ebibibi/AzureManagement/master/newDomainJoinedVM/azuredeploy.json `
+    -existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix $node -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword -DeploymentDebugLogLevel All
 
-New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node2") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/ebibibi/AzureManagement/master/newDomainJoinedVM/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node2") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword -DeploymentDebugLogLevel All
+    # Adding one more Data Disk
+    $dataDiskUri = ("https://" + $node + "SA.blob.core.windows.net/vhds/" + $node + "disk2.vhd")
+    $vm = Get-AzureRmVM -ResourceGroupName $resourceGroupName -Name $node
+    $vm = Add-AzureRmVMDataDisk -VM $vm -Name $dataDiskName -CreateOption Attach -VhdUri $dataDiskUri -DiskSizeInGB $additionalDataDiskSizeGB -Lun 1
+    Update-AzureRmVM -ResourceGroupName $resourceGroupName -VM $vm
+}
 
-New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node3") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/ebibibi/AzureManagement/master/newDomainJoinedVM/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node3") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword -DeploymentDebugLogLevel All
-
-New-AzureRmResourceGroupDeployment -Name ($deploymentName+"node4") -ResourceGroupName $resourceGroupName -TemplateUri https://raw.githubusercontent.com/ebibibi/AzureManagement/master/newDomainJoinedVM/azuredeploy.json `
--existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix ($prefix+"node4") -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword -DeploymentDebugLogLevel All
 
 # ここまで-----------------------------------------------------------------------
 
