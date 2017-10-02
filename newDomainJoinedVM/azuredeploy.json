@@ -73,7 +73,7 @@
     }
   },
   "variables": {
-    "storageAccountName": "[concat(parameters('dnsLabelPrefix'),'SA')]",
+    "storageAccountName": "[concat(parameters('dnsLabelPrefix'),'sa')]",
     "imagePublisher": "MicrosoftWindowsServer",
     "imageOffer": "WindowsServer",
     "windowsOSVersion": "2016-Datacenter",
