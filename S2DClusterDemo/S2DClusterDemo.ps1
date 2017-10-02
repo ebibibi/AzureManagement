@@ -88,24 +88,6 @@ New-Cluster -Name S2DCluster -Node $nodes –StaticAddress 10.0.0.100
 $witnessSAName = ($prefix +"witness")
 Set-ClusterQuorum -CloudWitness -AccountName $witnessSAName -AccessKey (Read-Host -Prompt "AccessKey for witness SA.")
 
-#clean up all disks(option)
-Invoke-Command (Get-Cluster -Name $nodes[0]| Get-ClusterNode) {
-    Update-StorageProviderCache
-    Get-StoragePool | Where-Object IsPrimordial -eq $false | Set-StoragePool -IsReadOnly:$false -ErrorAction SilentlyContinue
-    Get-StoragePool | Where-Object IsPrimordial -eq $false | Get-VirtualDisk | Remove-VirtualDisk -Confirm:$false -ErrorAction SilentlyContinue
-    Get-StoragePool | Where-Object IsPrimordial -eq $false | Remove-StoragePool -Confirm:$false -ErrorAction SilentlyContinue
-    Get-PhysicalDisk | Reset-PhysicalDisk -ErrorAction SilentlyContinue
-    Get-Disk | Where-Object Number -ne $null | Where-Object IsBoot -ne $true | Where-Object IsSystem -ne $true | Where-Object PartitionStyle -ne RAW | ForEach-Object {
-    $_ | Set-Disk -isoffline:$false
-    $_ | Set-Disk -isreadonly:$false
-    $_ | Clear-Disk -RemoveData -RemoveOEM -Confirm:$false
-    $_ | Set-Disk -isreadonly:$true
-    $_ | Set-Disk -isoffline:$true
-    }
-    
-    Get-Disk |Where-Object Number -ne $null |Where-Object IsBoot -ne $true |Where-Object IsSystem -ne $true |Where-Object PartitionStyle -eq RAW | Group-Object -NoElement -Property FriendlyName
-    
-    } | Sort-Object -Property PsComputerName,Count
 
 
 # change fault domain
