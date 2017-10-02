@@ -21,6 +21,7 @@ $adminPassword = Read-Host -AsSecureString -Prompt "password"
 $domainName = "s2d.test"
 
 #deploy parameters for member servers
+#$nodes = (($prefix + "node1"))
 $nodes = (($prefix + "node1"), ($prefix + "node2"), ($prefix + "node3"), ($prefix + "node4"))
 $existingVNETName = "adVNET"
 $existingSubnetName = "adSubnet"
@@ -48,9 +49,10 @@ foreach($node in $nodes) {
     -existingVNETName $existingVNETName -existingSubnetName $existingSubnetName -dnsLabelPrefix $node -vmSize $vmSize -domainToJoin $domainName -domainUsername $adminUserName -domainPassword $adminPassword -vmAdminUsername $adminUsername -vmAdminPassword $adminPassword -DeploymentDebugLogLevel All
 
     # Adding one more Data Disk
-    $dataDiskUri = ("https://" + $node + "SA.blob.core.windows.net/vhds/" + $node + "disk2.vhd")
+    $dataDiskName = ($node + "disk2.vhd")
+    $dataDiskUri = ("https://" + $node + "SA.blob.core.windows.net/vhds/" + $dataDiskName)
     $vm = Get-AzureRmVM -ResourceGroupName $resourceGroupName -Name $node
-    $vm = Add-AzureRmVMDataDisk -VM $vm -Name $dataDiskName -CreateOption Attach -VhdUri $dataDiskUri -DiskSizeInGB $additionalDataDiskSizeGB -Lun 1
+    $vm = Add-AzureRmVMDataDisk -VM $vm -Name $dataDiskName -CreateOption Empty -VhdUri $dataDiskUri -DiskSizeInGB $additionalDataDiskSizeGB -Lun 1
     Update-AzureRmVM -ResourceGroupName $resourceGroupName -VM $vm
 }
 
@@ -59,7 +61,7 @@ foreach($node in $nodes) {
 
 
 
-# 以下は展開されたクラスタノードとなるサーバーにRDPで入ってからその中で実行してください。-------------------------------
+# 以下は展開されたクラスタノードとなるサーバー(例:node1)にRDPで入ってからその中で実行してください。-------------------------------
 
 #enable-psremoting
 Enable-PSRemoting
