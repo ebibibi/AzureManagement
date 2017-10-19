@@ -25,9 +25,8 @@ $domainName = "s2d.test"
 $nodes = (($prefix + "node1"), ($prefix + "node2"), ($prefix + "node3"), ($prefix + "node4"))
 $existingVNETName = "adVNET"
 $existingSubnetName = "adSubnet"
-$vmSize = "Standard_D2"
+$vmSize = "Standard_DS2_v2"
 $additionalDataDiskSizeGB = 1000
-
 
 Get-AzureRmSubscription -SubscriptionName $subscriptionName | Select-AzureRmSubscription
 
@@ -35,7 +34,7 @@ Get-AzureRmSubscription -SubscriptionName $subscriptionName | Select-AzureRmSubs
 New-AzureRmResourceGroup -Name $resourceGroupName -Location $location
 
 # create storage account for witnesss
-New-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -Name $witnessSAName -SkuName Standard_LRS -Location $location -Kind Storage
+New-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -Name $witnessSAName -Type Standard_LRS -Location $location
 
 # create new ad forest(adVM)
 # https://github.com/ebibibi/AzureManagement/tree/master/newADForest
