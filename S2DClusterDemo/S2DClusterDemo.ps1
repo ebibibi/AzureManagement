@@ -145,3 +145,11 @@ Set-WinHomeLocation -GeoId 0x7A
 Set-WinSystemLocale -SystemLocale ja-JP
 Set-TimeZone -Id "Tokyo Standard Time"
 Restart-Computer
+
+
+#install honolulu(option)
+[System.IO.Path]::GetTempPath() | Tee-Object  -Variable installerPath
+$installer = ($installerPath + "honoluluTechnicalPreview1709-20016.msi")
+Invoke-WebRequest -Uri https://github.com/ebibibi/AzureManagement/raw/master/Honolulu/HonoluluTechnicalPreview1709-20016.msi -OutFile $installer
+
+Start-Process "$installer"
