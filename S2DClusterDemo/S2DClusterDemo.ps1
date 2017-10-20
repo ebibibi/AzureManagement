@@ -153,3 +153,14 @@ $installer = ($installerPath + "honoluluTechnicalPreview1709-20016.msi")
 Invoke-WebRequest -Uri https://github.com/ebibibi/AzureManagement/raw/master/Honolulu/HonoluluTechnicalPreview1709-20016.msi -OutFile $installer
 
 Start-Process "$installer"
+
+#disable IE ESC(option)
+function Disable-IEESC
+{
+$AdminKey = “HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}”
+$UserKey = “HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}”
+Set-ItemProperty -Path $AdminKey -Name “IsInstalled” -Value 0
+Set-ItemProperty -Path $UserKey -Name “IsInstalled” -Value 0
+Stop-Process -Name Explorer
+}
+Disable-IEESC
