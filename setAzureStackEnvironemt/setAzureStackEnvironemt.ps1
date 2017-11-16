@@ -60,7 +60,7 @@ $TenantIDforAdmin = Get-AzsDirectoryTenantId `
 #----------------------------------
 #Check Environments
 #----------------------------------
-Get-AzureRmEnvironment | ft name
+Get-AzureRmEnvironment | ft name, ResourceManagerUrl
 Get-AzureRmEnvironment -Name AzureCloud
 Get-AzureRmEnvironment -Name AzureStackAdmin
 Get-AzureRmEnvironment -Name AzureStackUser
