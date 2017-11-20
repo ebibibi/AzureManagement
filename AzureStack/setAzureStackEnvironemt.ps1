@@ -1,6 +1,6 @@
 #Prepare--------------
 # Specify Azure Active Directory tenant name
-$TenantName = "xxxxxxx.onmicrosoft.com"
+$TenantName = "jbsazsta.onmicrosoft.com"
 
 # Navigate to the downloaded folder and import the **Connect** PowerShell module
 Set-ExecutionPolicy Unrestricted -Force
