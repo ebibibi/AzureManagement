@@ -66,4 +66,9 @@ Get-AzureRmEnvironment -Name AzureStackAdmin
 Get-AzureRmEnvironment -Name AzureStackUser
 
 
-
+#----------------------------------
+#Login to Azure Environments
+#----------------------------------
+#Login-AzureRmAccount -EnvironmentName "AzureCloud"
+#Login-AzureRmAccount -EnvironmentName "AzureStackUser"
+#Login-AzureRmAccount -EnvironmentName "AzureCloudAdmin"
