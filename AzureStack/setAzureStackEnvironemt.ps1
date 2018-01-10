@@ -1,6 +1,8 @@
 #Prepare--------------
 # Specify Azure Active Directory tenant name
-$TenantName = "jbsazsta.onmicrosoft.com"
+#$TenantName = "jbsazsta.onmicrosoft.com"
+$TenantName = "jbsbpos.apac.microsoftonline.com"
+
 
 # Navigate to the downloaded folder and import the **Connect** PowerShell module
 Set-ExecutionPolicy Unrestricted -Force
@@ -22,8 +24,10 @@ Import-Module `
   .\Connect\AzureStack.Connect.psm1
 
 # For Azure Stack development kit, this value is set to https://adminmanagement.local.azurestack.external. To get this value for Azure Stack integrated systems, contact your service provider.
-$ArmEndpointforAdmin = "https://adminmanagement.local.azurestack.external"
-$ArmEndpointforUser = "https://management.local.azurestack.external"
+#$ArmEndpointforAdmin = "https://adminmanagement.local.azurestack.external"
+#$ArmEndpointforUser = "https://management.local.azurestack.external"
+$ArmEndpointforAdmin = "https://adminmanagement.tokyo.mas.jbs.com"
+$ArmEndpointforUser = "https://management.tokyo.mas.jbs.com"
 
 
 # For Azure Stack development kit, this value is set to https://graph.windows.net/. To get this value for Azure Stack integrated systems, contact your service provider.
@@ -71,4 +75,4 @@ Get-AzureRmEnvironment -Name AzureStackUser
 #----------------------------------
 #Login-AzureRmAccount -EnvironmentName "AzureCloud"
 #Login-AzureRmAccount -EnvironmentName "AzureStackUser"
-#Login-AzureRmAccount -EnvironmentName "AzureCloudAdmin"
+#Login-AzureRmAccount -EnvironmentName "AzureStackAdmin"
