@@ -7,7 +7,7 @@
 Login-AzureRmAccount
 $prefix = "ebis2d1"
 
-$subscriptionName = "Microsoft Azure Sponsor PLAN"
+$subscriptionName = "Demo"
 $deploymentName = "S2DDemo"
 $resourceGroupName = ($prefix + "-Demo")
 $location = "Japan East"
