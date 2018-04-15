@@ -9,5 +9,5 @@ New-Item $LocalPath -Type directory
 Invoke-WebRequest $uri -OutFile ($LocalPath + '\' + 'asdk-installer.ps1')
 
 # StartScript
-cd $LocalPath
+Set-Location $LocalPath
 .\asdk-installer.ps1
