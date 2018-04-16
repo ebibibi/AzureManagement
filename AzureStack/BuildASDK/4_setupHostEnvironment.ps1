@@ -64,3 +64,25 @@ Do {
         rm "$LocalTempDir\$VSCodeInstaller" -ErrorAction SilentlyContinue -Verbose 
     } 
 } Until (!$ProcessesFound)
+
+
+#install TortoiseGit
+$LocalTempDir = $env:TEMP
+$TortoiseGitInstaller = "TortoiseGit-2.6.0.0-64bit.msi"
+(new-object    System.Net.WebClient).DownloadFile('https://download.tortoisegit.org/tgit/2.6.0.0/TortoiseGit-2.6.0.0-64bit.msi', "$LocalTempDir\$TortoiseGitInstaller")
+& msiexec.exe /i "$LocalTempDir\$TortoiseGitInstaller" /passive
+$Process2Monitor =  "TortoiseGit-2.6.0.0-64bit.msi"
+Do { 
+    $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name
+    If ($ProcessesFound) {
+        "Still running: $($ProcessesFound -join ', ')" | Write-Host
+        Start-Sleep -Seconds 2 
+    } else {
+        rm "$LocalTempDir\$TortoiseGitInstaller" -ErrorAction SilentlyContinue -Verbose 
+    } 
+} Until (!$ProcessesFound)
+
+
+#open directory
+cd D:\ReBuildASDK\AzureManagement\AzureStack
+Invoke-Item .
