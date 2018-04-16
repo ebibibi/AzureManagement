@@ -26,6 +26,28 @@ Stop-Process -Name Explorer
 Disable-IEESC
 
 
+#install git
+$LocalTempDir = $env:TEMP
+$GitInstaller = "Git-2.17.0-64-bit.exe"
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+(new-object    System.Net.WebClient).DownloadFile('https://github.com/git-for-windows/git/releases/download/v2.17.0.windows.1/Git-2.17.0-64-bit.exe', "$LocalTempDir\$GitInstaller")
+& "$LocalTempDir\$GitInstaller"  /SILENT /COMPONENTS="icons,ext\reg\shellhere,assoc,assoc_sh"
+$Process2Monitor =  "Git-2.16.2-64-bit.exe"
+Do { 
+    $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name
+    If ($ProcessesFound) {
+        "Still running: $($ProcessesFound -join ', ')" | Write-Host
+        Start-Sleep -Seconds 2 
+    } else {
+        rm "$LocalTempDir\$GitInstaller" -ErrorAction SilentlyContinue -Verbose 
+    } 
+} Until (!$ProcessesFound)
+
+
+
+
+
+
 
 #Install VSCode
 $LocalTempDir = $env:TEMP
