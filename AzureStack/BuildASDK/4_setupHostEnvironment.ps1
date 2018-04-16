@@ -24,3 +24,21 @@ Set-ItemProperty -Path $UserKey -Name “IsInstalled” -Value 0
 Stop-Process -Name Explorer
 }
 Disable-IEESC
+
+
+
+#Install VSCode
+$LocalTempDir = $env:TEMP
+$VSCodeInstaller = "VSCodeSetup-x64.exe"
+(new-object    System.Net.WebClient).DownloadFile('https://go.microsoft.com/fwlink/?Linkid=852157', "$LocalTempDir\$VSCodeInstaller")
+& "$LocalTempDir\$VSCodeInstaller" /VERYSILENT /MEGGETASKS=!runcode
+$Process2Monitor =  "VSCodeSetup-x64.exe"
+Do { 
+    $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name
+    If ($ProcessesFound) {
+        "Still running: $($ProcessesFound -join ', ')" | Write-Host
+        Start-Sleep -Seconds 2 
+    } else {
+        rm "$LocalTempDir\$VSCodeInstaller" -ErrorAction SilentlyContinue -Verbose 
+    } 
+} Until (!$ProcessesFound)
