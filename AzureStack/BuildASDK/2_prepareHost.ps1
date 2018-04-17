@@ -1,3 +1,7 @@
+# Move CloudBuilder.vhdx to root
+Remove-Item "C:\CloudBuilder.vhdx" -Force
+Move-Item "C:\ReBuildASDK\VHDXDownload\Azure Stack Development Kit\CloudBuilder.vhdx" C:\
+
 # Variables
 $Uri = 'https://raw.githubusercontent.com/Azure/AzureStack-Tools/master/Deployment/asdk-installer.ps1'
 $LocalPath = 'C:\AzureStack_Installer'
