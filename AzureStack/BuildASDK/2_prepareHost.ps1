@@ -1,5 +1,9 @@
 # Move CloudBuilder.vhdx to root
-Remove-Item "C:\CloudBuilder.vhdx" -Force
+If (Test-Path "C:\CloudBuilder.vhdx") {
+    If (Test-Path "C:\ReBuildASDK\VHDXDownload\Azure Stack Development Kit\CloudBuilder.vhdx") {
+        Remove-Item "C:\CloudBuilder.vhdx" -Force
+    }
+}
 Move-Item "C:\ReBuildASDK\VHDXDownload\Azure Stack Development Kit\CloudBuilder.vhdx" C:\
 
 # Variables
