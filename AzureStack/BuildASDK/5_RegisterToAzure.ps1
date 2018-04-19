@@ -1,8 +1,6 @@
-﻿# install Azure PowerShell
-Install-Module AzureRM
-
-# add-credential
-Add-AzureRMAccount -EnvironmentName AzureCloud
+﻿
+# Add the Azure cloud subscription environment name. Supported environment names are AzureCloud or, if using a China Azure Subscription, AzureChinaCloud.
+Connect-AzureRmAccount -EnvironmentName "AzureCloud"
 
 # select subscription
 $subscription = $null
@@ -15,6 +13,7 @@ While ($subscription -eq $null) {
 
 $subscription | Select-AzureRmSubscription
 
+# Register the Azure Stack resource provider in your Azure subscription
 Register-AzureRmResourceProvider -ProviderNamespace Microsoft.AzureStack
 
 
@@ -38,7 +37,16 @@ expand-archive master.zip `
   -Force
 
 # Change to the tools directory.
-cd d:\Tools\AzureStack-Tools-master\Registration
+cd d:\Tools\AzureStack-Tools-master
 
-# Import module
-Import-Module .\RegisterWithAzure.psm1
+# import module
+Import-Module D:\Tools\AzureStack-Tools-master\Registration\RegisterWithAzure.psm1
+
+#Register Azure Stack
+$AzureContext = Get-AzureRmContext
+$CloudAdminCred = Get-Credential -UserName AZURESTACK\CloudAdmin -Message "Enter the credentials to access the privileged endpoint."
+Set-AzsRegistration `
+    -AzureContext $AzureContext `
+    -PrivilegedEndpointCredential $CloudAdminCred `
+    -PrivilegedEndpoint AzS-ERCS01 `
+    -BillingModel Development
