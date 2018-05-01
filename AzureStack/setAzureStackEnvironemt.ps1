@@ -10,6 +10,7 @@ Set-ExecutionPolicy Unrestricted -Force
 # Download Azure Stack tools from GitHub and import the connect module
 cd \
 
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 invoke-webrequest `
   https://github.com/Azure/AzureStack-Tools/archive/master.zip `
   -OutFile master.zip
