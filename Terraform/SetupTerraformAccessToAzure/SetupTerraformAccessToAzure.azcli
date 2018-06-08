@@ -1,5 +1,0 @@
-az login
-$SUBSCRIPTION_ID = "3b99fb3a-a079-45cb-a557-73faca548f7d"
-az account set --subscription="${SUBSCRIPTION_ID}"
-az account show --query "{subscriptionId:id, tenantId:tenantId}"
-az ad sp create-for-rbac --role="Contributor" --scopes="/subscriptions/${SUBSCRIPTION_ID}"
