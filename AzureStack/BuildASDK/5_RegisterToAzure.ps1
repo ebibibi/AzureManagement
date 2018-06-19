@@ -1,6 +1,6 @@
 ﻿
 # Add the Azure cloud subscription environment name. Supported environment names are AzureCloud or, if using a China Azure Subscription, AzureChinaCloud.
-Connect-AzureRmAccount -EnvironmentName "AzureCloud"
+Login-AzureRmAccount -EnvironmentName "AzureCloud"
 
 # select subscription
 $subscription = $null
