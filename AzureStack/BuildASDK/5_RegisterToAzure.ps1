@@ -1,6 +1,6 @@
 ﻿Install-Module -Name AzureRm.BootStrapper -Force
 Use-AzureRmProfile -Profile 2017-03-09-profile
-Install-Module -Name AzureStack -RequiredVersion 1.2.11 -Forc
+Install-Module -Name AzureStack -RequiredVersion 1.2.11 -Force
 
 
 # Add the Azure cloud subscription environment name. Supported environment names are AzureCloud or, if using a China Azure Subscription, AzureChinaCloud.
