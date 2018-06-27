@@ -132,6 +132,10 @@ resource "azurerm_template_deployment" "appservice" {
           "alwaysOn": true,
           "appSettings": [
             {
+              "name": "WEBSITES_CONTAINER_START_TIME_LIMIT",
+              "value": "300"
+            },
+            {
               "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
               "value": "true"
             },
