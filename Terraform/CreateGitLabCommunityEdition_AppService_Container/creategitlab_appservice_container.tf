@@ -40,7 +40,7 @@ resource "azurerm_postgresql_server" "postgresql" {
   administrator_login          = "psqladmin"
   administrator_login_password = "${var.password}"
   version                      = "9.5"
-  ssl_enforcement              = "Enabled"
+  ssl_enforcement              = "Disabled"
 }
 
 resource "azurerm_template_deployment" "appservice" {
@@ -133,7 +133,7 @@ resource "azurerm_template_deployment" "appservice" {
           "appSettings": [
             {
               "name": "WEBSITES_CONTAINER_START_TIME_LIMIT",
-              "value": "300"
+              "value": "600"
             },
             {
               "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
