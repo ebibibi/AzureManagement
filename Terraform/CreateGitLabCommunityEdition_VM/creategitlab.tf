@@ -10,7 +10,7 @@ resource "azurerm_resource_group" "myterraformgroup" {
 
 # Create virtual network
 resource "azurerm_virtual_network" "myterraformnetwork" {
-  name                = "myVnet"
+  name                = "Vnet"
   address_space       = ["10.0.0.0/16"]
   location            = "japaneast"
   resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
@@ -18,7 +18,7 @@ resource "azurerm_virtual_network" "myterraformnetwork" {
 
 # Create subnet
 resource "azurerm_subnet" "myterraformsubnet" {
-  name                 = "mySubnet"
+  name                 = "Subnet"
   resource_group_name  = "${azurerm_resource_group.myterraformgroup.name}"
   virtual_network_name = "${azurerm_virtual_network.myterraformnetwork.name}"
   address_prefix       = "10.0.1.0/24"
@@ -26,7 +26,7 @@ resource "azurerm_subnet" "myterraformsubnet" {
 
 # Create public IPs
 resource "azurerm_public_ip" "myterraformpublicip" {
-  name                         = "myPublicIP"
+  name                         = "PublicIP"
   location                     = "japaneast"
   resource_group_name          = "${azurerm_resource_group.myterraformgroup.name}"
   public_ip_address_allocation = "dynamic"
@@ -34,7 +34,7 @@ resource "azurerm_public_ip" "myterraformpublicip" {
 
 # Create Network Security Group and rule
 resource "azurerm_network_security_group" "myterraformnsg" {
-  name                = "myNetworkSecurityGroup"
+  name                = "NetworkSecurityGroup"
   location            = "japaneast"
   resource_group_name = "${azurerm_resource_group.myterraformgroup.name}"
 
@@ -61,29 +61,17 @@ resource "azurerm_network_security_group" "myterraformnsg" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-
-  security_rule {
-    name                       = "HTTP"
-    priority                   = 1003
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "10080"
-    source_address_prefix      = "*"
-    destination_address_prefix = "*"
-  }
 }
 
 # Create network interface
 resource "azurerm_network_interface" "myterraformnic" {
-  name                      = "myNIC"
+  name                      = "NIC"
   location                  = "japaneast"
   resource_group_name       = "${azurerm_resource_group.myterraformgroup.name}"
   network_security_group_id = "${azurerm_network_security_group.myterraformnsg.id}"
 
   ip_configuration {
-    name                          = "myNicConfiguration"
+    name                          = "NicConfiguration"
     subnet_id                     = "${azurerm_subnet.myterraformsubnet.id}"
     private_ip_address_allocation = "dynamic"
     public_ip_address_id          = "${azurerm_public_ip.myterraformpublicip.id}"
@@ -111,14 +99,14 @@ resource "azurerm_storage_account" "mystorageaccount" {
 
 # Create virtual machine
 resource "azurerm_virtual_machine" "myterraformvm" {
-  name                  = "myVM"
+  name                  = "GitLabCEVM"
   location              = "japaneast"
   resource_group_name   = "${azurerm_resource_group.myterraformgroup.name}"
   network_interface_ids = ["${azurerm_network_interface.myterraformnic.id}"]
   vm_size               = "Standard_DS1_v2"
 
   storage_os_disk {
-    name              = "myOsDisk"
+    name              = "OsDisk"
     caching           = "ReadWrite"
     create_option     = "FromImage"
     managed_disk_type = "Premium_LRS"
