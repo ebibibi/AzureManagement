@@ -133,7 +133,7 @@ resource "azurerm_template_deployment" "appservice" {
           "appSettings": [
             {
               "name": "WEBSITES_ENABLE_APP_SERVICE_STORAGE",
-              "value": "false"
+              "value": "true"
             },
             {
               "name": "GITLAB_HOST",
@@ -182,7 +182,7 @@ DEPLOY
     name                     = "jbsgitlabce"
     image                    = "ebibibi/appservice-gitlab-ce"
     app_service_plan_id      = "${azurerm_app_service_plan.AppservicePlan.id}"
-    gitlab_host              = "https://jbsgitlabce.azurewebsites.net"
+    gitlab_host              = "http://jbsgitlabce.azurewebsites.net"
     gitlab_database_adapter  = "postgresql"
     gitlab_database_host     = "${azurerm_postgresql_server.postgresql.name}"
     gitlab_database_database = "gitlab"
