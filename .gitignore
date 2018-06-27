@@ -10,3 +10,4 @@
 *.tfvars
 Terraform/CreateGitLabCommunityEdition/terraform.tfstate
 Terraform/CreateGitLabCommunityEdition/terraform.tfstate.backup
+Terraform/CreateGitLabCommunityEdition_AppService_Container/variables.tf
