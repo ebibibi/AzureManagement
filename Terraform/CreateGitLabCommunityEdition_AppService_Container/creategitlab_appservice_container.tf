@@ -190,7 +190,7 @@ DEPLOY
     gitlab_database_adapter  = "postgresql"
     gitlab_database_host     = "${azurerm_postgresql_server.postgresql.name}"
     gitlab_database_database = "gitlab"
-    gitlab_database_username = "psqladmin"
+    gitlab_database_username = "psqladmin@postgresqlforgitlab"
     gitlab_database_password = "${var.password}"
     gitlab_database_port     = "5432"
     gitlab_database_encoding = "utf8"
