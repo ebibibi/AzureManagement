@@ -13,8 +13,8 @@ $privilegedEndpoint = "AzS-ERCS01"
 $tempDir = 'd:\tools'
 
 # The service admin account (can be Azure Active Directory or Active Directory Federation Services).
-$serviceAdmin = "admin01@jbsazsta.onmicrosoft.com"
-$AdminPass = ConvertTo-SecureString "Azurest@ck123" -AsPlainText -Force
+$serviceAdmin = "AADアカウント"
+$AdminPass = ConvertTo-SecureString "パスワード" -AsPlainText -Force
 $AdminCreds = New-Object System.Management.Automation.PSCredential ($serviceAdmin, $AdminPass)
 
 # Set credentials for the new resource provider VM local administrator account
@@ -36,4 +36,4 @@ $PfxPass = ConvertTo-SecureString "ASDKAdmin!" -AsPlainText -Force
   -PrivilegedEndpoint $privilegedEndpoint `
   -DefaultSSLCertificatePassword $PfxPass `
   -DependencyFilesLocalPath $tempDir\cert
-  
+
