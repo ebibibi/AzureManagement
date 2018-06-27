@@ -13,8 +13,9 @@ $privilegedEndpoint = "AzS-ERCS01"
 $tempDir = 'd:\tools'
 
 # The service admin account (can be Azure Active Directory or Active Directory Federation Services).
-$serviceAdmin = "admin01@jbsazsta.onmicrosoft.com"
-$AdminPass = ConvertTo-SecureString "Azurest@ck123" -AsPlainText -Force
+$CONF = (Get-Content "0_ID_Password_maintenance.json") | ConvertFrom-Json
+$serviceAdmin = $CONF.AzureADAccount
+$AdminPass = ConvertTo-SecureString $CONF.AzureADAccountPassword -AsPlainText -Force
 $AdminCreds = New-Object System.Management.Automation.PSCredential ($serviceAdmin, $AdminPass)
 
 # Set credentials for the new resource provider VM local administrator account
@@ -30,10 +31,10 @@ $PfxPass = ConvertTo-SecureString "ASDKAdmin!" -AsPlainText -Force
 
 # Change directory to the folder where you extracted the installation files.
 # Then adjust the endpoints.
-. $tempDir\DeploySQLProvider.ps1 -AzCredential $AdminCreds `
+. $tempDir\DeploySQLProvider.ps1 -AzCredential $AdminCreds  `
   -VMLocalCredential $vmLocalAdminCreds `
   -CloudAdminCredential $cloudAdminCreds `
   -PrivilegedEndpoint $privilegedEndpoint `
   -DefaultSSLCertificatePassword $PfxPass `
   -DependencyFilesLocalPath $tempDir\cert
-  
+
