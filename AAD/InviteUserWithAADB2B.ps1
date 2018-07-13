@@ -3,7 +3,10 @@ param (
     [string]$email
 )
 
-$targetADDirectory = "a54026f4-324d-491c-b143-42e41de55fe2"
+$targetADDirectory = ""
+$targetAzureSubscription = ""
+
+
 Write-Host "You have to connect to WindowsAdmin AAD Directory($targetADDirectory)"
 
 Import-Module azuread
@@ -30,6 +33,8 @@ catch [Microsoft.Open.Azure.AD.CommonLibrary.AadNeedAuthenticationException] {
 
 $invitation = New-AzureADMSInvitation -InvitedUserEmailAddress $email -InviteRedirectUrl "https://portal.azure.com/" -SendInvitationMessage $true
 
+# Select Subscription
+Get-AzureRmSubscription -SubscriptionId $targetAzureSubscription | Select-AzureRmSubscription
 
 # Create RG
 New-AzureRMResourceGroup -Name $rgname -Location "Japan East"
