@@ -7,7 +7,7 @@ $targetADDirectory = ""
 $targetAzureSubscription = ""
 
 
-Write-Host "You have to connect to WindowsAdmin AAD Directory($targetADDirectory)"
+Write-Host "You have to connect to AAD Directory($targetADDirectory)"
 
 Import-Module azuread
 $azureadmodule = Get-Module azuread
@@ -15,7 +15,7 @@ if ($null -eq $azureadmodule) {
     Install-Module azuread -Scope CurrentUser
 }
 
-# Connect to Azure AD(WindowsAdmin Directory)
+# Connect to Azure AD
 try {
     $connection = Get-AzureADTenantDetail
     if ($connection.ObjectId -ne $targetADDirectory) {
