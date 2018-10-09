@@ -1,7 +1,7 @@
 ﻿install-module AzureAD | Out-Null
 Connect-AzureAD | Out-Null
 
-$applications = Get-AzureADApplication
+$applications = Get-AzureADApplication -All $true
 Write-Output "DiskplayName, ObjectId, AppId, Owner_DisplayName, Owner_UserPrincipalName, Owner_UserType"
 foreach($application in $applications) {
     $info = ""
