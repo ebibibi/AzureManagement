@@ -12,7 +12,7 @@ RUN Install-PackageProvider -Name NuGet -MinimumVersion 2.8.5.201 -Force ; \
 Set-PSRepository -Name "PSGallery" -InstallationPolicy Trusted ; \
 Install-Module -Name AzureRm.BootStrapper ; \
 Use-AzureRmProfile -Profile 2017-03-09-profile -Force ; \
-Install-Module -Name AzureStack -RequiredVersion 1.2.11
+Install-Module -Name AzureStack -RequiredVersion 1.4.0
 
 RUN Cd / ; \
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12 ; \
