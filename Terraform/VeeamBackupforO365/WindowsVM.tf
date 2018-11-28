@@ -145,11 +145,26 @@ resource "azurerm_virtual_machine" "virtualmachine" {
     managed_disk_type = "Premium_LRS"
   }
 
+  storage_data_disk {
+    name              = "DataDisk"
+    caching           = "ReadWrite"
+    create_option     = "Empty"
+    managed_disk_type = "Premium_LRS"
+    disk_size_gb      = "100"
+    lun               = "1"
+  }
+
   storage_image_reference {
-    publisher = "MicrosoftWindowsServer"
-    offer     = "WindowsServer"
-    sku       = "2016-Datacenter"
-    version   = "latest"
+    publisher = "veeam"
+    offer     = "veeamcloudconnect"
+    sku       = "veeambackup"
+    version   = "1.2.0"
+  }
+
+  plan {
+    name      = "veeambackup"
+    publisher = "veeam"
+    product   = "veeamcloudconnect"
   }
 
   os_profile {
