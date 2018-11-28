@@ -1,0 +1,6 @@
+resourcename = "resourcegroup"
+location = "japaneast"
+vmname = "vmname"
+vmsize = "Standard_DS5_v2"
+adminusername = "admin"
+adminpassword = "P@ssw0rdOfAdmin"
