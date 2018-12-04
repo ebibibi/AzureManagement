@@ -5,7 +5,7 @@
 # Update-Module AzureRM
 
 Login-AzureRmAccount
-$prefix = "ebis2d1"
+$prefix = "ebis2dx"
 
 $subscriptionName = "Demo"
 $deploymentName = "S2DDemo"
@@ -99,6 +99,49 @@ Set-ClusterQuorum -CloudWitness -AccountName $witnessSAName -AccessKey (Read-Hos
 # enable S2D (automatically created cluster pool)
 Enable-ClusterS2D
 
+
+
+#install WindowsAdminCenter(option)
+[System.IO.Path]::GetTempPath() | Tee-Object  -Variable installerPath
+$installer = ($installerPath + "WindowsAdminCenter1809.msi")
+[Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
+Invoke-WebRequest -Uri https://github.com/ebibibi/AzureManagement/raw/master/Honolulu/WindowsAdminCenter1809.msi -OutFile $installer
+
+Start-Process "$installer"
+
+#disable IE ESC(option)
+function Disable-IEESC
+{
+$AdminKey = “HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}”
+$UserKey = “HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}”
+Set-ItemProperty -Path $AdminKey -Name “IsInstalled” -Value 0
+Set-ItemProperty -Path $UserKey -Name “IsInstalled” -Value 0
+Stop-Process -Name Explorer
+}
+Disable-IEESC
+
+#install chrome(option)
+$LocalTempDir = $env:TEMP
+$ChromeInstaller = "ChromeInstaller.exe"
+(new-object    System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/375.126/chrome_installer.exe', "$LocalTempDir\$ChromeInstaller")
+& "$LocalTempDir\$ChromeInstaller" /silent /install
+$Process2Monitor =  "ChromeInstaller"
+Do { 
+    $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name
+    If ($ProcessesFound) {
+        "Still running: $($ProcessesFound -join ', ')" | Write-Host
+        Start-Sleep -Seconds 2 
+    } else {
+        rm "$LocalTempDir\$ChromeInstaller" -ErrorAction SilentlyContinue -Verbose 
+    } 
+} Until (!$ProcessesFound)
+
+
+
+
+
+
+
 # create new volume (this operation should be done by GUI but It couldn't now)
 Get-StoragePool
 Get-StoragePool S2D*| Get-ResiliencySetting
@@ -147,36 +190,4 @@ Set-TimeZone -Id "Tokyo Standard Time"
 Restart-Computer
 
 
-#install honolulu(option)
-[System.IO.Path]::GetTempPath() | Tee-Object  -Variable installerPath
-$installer = ($installerPath + "honoluluTechnicalPreview1709-20016.msi")
-Invoke-WebRequest -Uri https://github.com/ebibibi/AzureManagement/raw/master/Honolulu/HonoluluTechnicalPreview1709-20016.msi -OutFile $installer
 
-Start-Process "$installer"
-
-#disable IE ESC(option)
-function Disable-IEESC
-{
-$AdminKey = “HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A7-37EF-4b3f-8CFC-4F3A74704073}”
-$UserKey = “HKLM:\SOFTWARE\Microsoft\Active Setup\Installed Components\{A509B1A8-37EF-4b3f-8CFC-4F3A74704073}”
-Set-ItemProperty -Path $AdminKey -Name “IsInstalled” -Value 0
-Set-ItemProperty -Path $UserKey -Name “IsInstalled” -Value 0
-Stop-Process -Name Explorer
-}
-Disable-IEESC
-
-#install chrome(option)
-$LocalTempDir = $env:TEMP
-$ChromeInstaller = "ChromeInstaller.exe"
-(new-object    System.Net.WebClient).DownloadFile('http://dl.google.com/chrome/install/375.126/chrome_installer.exe', "$LocalTempDir\$ChromeInstaller")
-& "$LocalTempDir\$ChromeInstaller" /silent /install
-$Process2Monitor =  "ChromeInstaller"
-Do { 
-    $ProcessesFound = Get-Process | ?{$Process2Monitor -contains $_.Name} | Select-Object -ExpandProperty Name
-    If ($ProcessesFound) {
-        "Still running: $($ProcessesFound -join ', ')" | Write-Host
-        Start-Sleep -Seconds 2 
-    } else {
-        rm "$LocalTempDir\$ChromeInstaller" -ErrorAction SilentlyContinue -Verbose 
-    } 
-} Until (!$ProcessesFound)

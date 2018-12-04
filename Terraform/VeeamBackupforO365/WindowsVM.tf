@@ -156,15 +156,15 @@ resource "azurerm_virtual_machine" "virtualmachine" {
 
   storage_image_reference {
     publisher = "veeam"
-    offer     = "veeamcloudconnect"
-    sku       = "veeambackup"
-    version   = "1.2.0"
+    offer     = "veeam-backup-replication"
+    sku       = "veeam-backup-replication-95"
+    version   = "1.0.0"
   }
 
   plan {
-    name      = "veeambackup"
+    name      = "veeam-backup-replication-95"
     publisher = "veeam"
-    product   = "veeamcloudconnect"
+    product   = "veeam-backup-replication"
   }
 
   os_profile {
